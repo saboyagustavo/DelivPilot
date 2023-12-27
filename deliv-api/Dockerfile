@@ -14,16 +14,6 @@ RUN npm install
 
 COPY . .
 
-# RUN chmod +x /usr/src/app/wait-for.sh
-
-# RUN /usr/src/app/wait-for.sh
-
 EXPOSE 3000
 
-# ENTRYPOINT ["npm"]
-
-# CMD ["run", "start:dev"]
-
-# CMD ["/bin/sh", "/usr/src/app/start-dev.sh"]
-
-CMD ["sh", "-c", "dockerize -wait tcp://deliv-db:5432 -timeout 1m && npx prisma migrate deploy && npm run start:dev"]
+CMD ["sh", "-c", "dockerize -wait tcp://deliv-db:5432 -timeout 1m && npx prisma migrate dev --name 'update' && npm run start:dev"]

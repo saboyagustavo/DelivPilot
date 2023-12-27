@@ -17,3 +17,24 @@ enum Role {
 
   @@map("role")
 }
+
+model User {
+  id        Int       @id @unique @default(autoincrement()) @map("user_id")
+  name      String    @db.VarChar
+  email     String    @unique @db.VarChar
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  role      Role      @default(USER)
+}
+
+model Order {
+  id               Int     @id @default(autoincrement()) @map("order_id")
+  order_number     Int
+  status           String  @db.VarChar
+  item             String  @db.VarChar
+  customer         String  @db.VarChar
+  shipping_service String  @db.VarChar
+  priority         String  @db.VarChar
+  tracking_code    String? @unique @db.VarChar
+  closed           Boolean @default(false)
+}
