@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -19,22 +16,72 @@ enum Role {
 }
 
 model User {
-  id        Int       @id @unique @default(autoincrement()) @map("user_id")
-  name      String    @db.VarChar
-  email     String    @unique @db.VarChar
-  createdAt DateTime? @default(now()) @map("created_at")
-  updatedAt DateTime? @updatedAt @map("updated_at")
-  role      Role      @default(USER)
+  id              Int              @id @unique @default(autoincrement()) @map("user_id")
+  name            String           @db.VarChar
+  email           String           @unique @db.VarChar
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  role            Role             @default(USER)
+  customer        Customer?
+  shippingService ShippingService?
+
+  @@map("users")
+}
+
+enum OrderStatus {
+  NEW        @map("new")
+  SHIPPED    @map("shipped")
+  PROCESSING @map("processing")
+  CANCELLED  @map("cancelled")
+  REJECTED   @map("rejected")
+  DRAFT      @map("draft")
+
+  @@map("order_status")
+}
+
+enum OrderPriority {
+  STANDARD @map("standard")
+  EXPRESS  @map("express")
+  TOP      @map("top")
+
+  @@map("order_priorities")
 }
 
 model Order {
-  id               Int     @id @default(autoincrement()) @map("order_id")
-  order_number     Int
-  status           String  @db.VarChar
-  item             String  @db.VarChar
-  customer         String  @db.VarChar
-  shipping_service String  @db.VarChar
-  priority         String  @db.VarChar
-  tracking_code    String? @unique @db.VarChar
-  closed           Boolean @default(false)
+  id                Int         @id @default(autoincrement()) @map("order_id")
+  status            OrderStatus @map("status")
+  customerId        Int         @map("customer_id")
+  shippingServiceId Int         @map("shipping_service_id")
+  priority          String      @db.VarChar
+  trackingCode      String?     @unique @map("tracking_code") @db.VarChar
+  closed            Boolean     @default(false)
+  createdAt         DateTime    @default(now()) @map("created_at")
+  updatedAt         DateTime    @updatedAt @map("updated_at")
+
+  customer        Customer        @relation(fields: [customerId], references: [id])
+  shippingService ShippingService @relation(fields: [shippingServiceId], references: [id])
+
+  @@map("orders")
+}
+
+model Customer {
+  id          Int     @id @default(autoincrement()) @map("customer_id")
+  userId      Int     @unique @map("user_id")
+  legalPerson Boolean @default(false) @map("legal_person")
+
+  user  User    @relation(fields: [userId], references: [id])
+  order Order[]
+
+  @@map("customers")
+}
+
+model ShippingService {
+  id          Int     @id @default(autoincrement()) @map("shipping_id")
+  userId      Int     @unique @map("user_id")
+  legalPerson Boolean @default(false) @map("legal_person")
+
+  user  User    @relation(fields: [userId], references: [id])
+  Order Order[]
+
+  @@map("shipping_services")
 }
