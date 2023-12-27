@@ -48,15 +48,15 @@ enum OrderPriority {
 }
 
 model Order {
-  id                Int         @id @default(autoincrement()) @map("order_id")
-  status            OrderStatus @map("status")
-  customerId        Int         @map("customer_id")
-  shippingServiceId Int         @map("shipping_service_id")
-  priority          String      @db.VarChar
-  trackingCode      String?     @unique @map("tracking_code") @db.VarChar
-  closed            Boolean     @default(false)
-  createdAt         DateTime    @default(now()) @map("created_at")
-  updatedAt         DateTime    @updatedAt @map("updated_at")
+  id                Int           @id @default(autoincrement()) @map("order_id")
+  status            OrderStatus   @map("status")
+  customerId        Int           @map("customer_id")
+  shippingServiceId Int           @map("shipping_service_id")
+  priority          OrderPriority @map("priority")
+  trackingCode      String?       @unique @map("tracking_code") @db.VarChar
+  closed            Boolean       @default(false)
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
 
   customer        Customer        @relation(fields: [customerId], references: [id])
   shippingService ShippingService @relation(fields: [shippingServiceId], references: [id])
