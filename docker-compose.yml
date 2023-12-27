@@ -1,0 +1,54 @@
+version: '3'
+services:
+  api:
+    build:
+      context: ./deliv-api
+      dockerfile: Dockerfile
+    container_name: deliv-api
+    volumes:
+      - ./deliv-api:/usr/src/app
+    env_file:
+      - ./deliv-api/.env
+    tty: true
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - deliv-network
+  
+  db:
+    image: postgres
+    container_name: deliv-db
+    restart: always
+    tty: true
+    env_file:
+      - ./deliv-api/.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    networks:
+      - deliv-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    env_file:
+      - ./deliv-api/.env
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    networks:
+      - deliv-network
+
+networks:
+  deliv-network:
+    driver: bridge
