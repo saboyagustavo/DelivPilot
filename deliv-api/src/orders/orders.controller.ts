@@ -20,9 +20,17 @@ export class OrdersController {
     return this.ordersService.create(createOrderDto);
   }
 
-  @Get()
-  findAll() {
-    return this.ordersService.findAll();
+  @Get('/all/pagination/:page/:pageSize')
+  findAllPagination(
+    @Param('page') page?: string,
+    @Param('pageSize') pageSize?: string,
+  ) {
+    return this.ordersService.findAllFetchPagination(+page, +pageSize);
+  }
+
+  @Get('/all/:page/:pageSize')
+  findAll(@Param('page') page?: string, @Param('pageSize') pageSize?: string) {
+    return this.ordersService.findAll(+page, +pageSize);
   }
 
   @Get(':id')

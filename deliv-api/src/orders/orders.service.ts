@@ -13,26 +13,39 @@ export class OrdersService {
   async findAll(page = 1, pageSize = 10) {
     const skip = (page - 1) * pageSize;
 
-    const [orders, totalCount] = await Promise.all([
-      this.prisma.order.findMany({
-        skip,
-        take: pageSize,
-      }),
-      this.prisma.order.count(),
-    ]);
+    const orders = await this.prisma.order.findMany({
+      skip,
+      take: pageSize,
+      include: {
+        shippingService: {
+          select: {
+            id: true,
+            user: { select: { name: true } },
+          },
+        },
+      },
+    });
 
-    const firstItem = skip + 1;
+    const { pagination, pagesAmount, totalCount } =
+      await this.findAllFetchPagination(page, pageSize);
 
+    return { totalCount, pagination, pagesAmount, orders };
+  }
+
+  async findAllFetchPagination(page = 1, pageSize = 10) {
+    const totalCount = await this.prisma.order.count();
+
+    const firstItem = Math.min((page - 1) * pageSize + 1, totalCount);
     const lastItem = Math.min(page * pageSize, totalCount);
 
     const pagination = `Showing ${firstItem} to ${lastItem} of ${totalCount} results`;
 
     const pagesAmount = Math.ceil(totalCount / pageSize);
-    return { totalCount, pagination, pagesAmount, orders };
+    return { totalCount, pagination, pagesAmount };
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} order`;
+    return this.prisma.order.findUnique({ where: { id } });
   }
 
   update(id: number, updateOrderDto: UpdateOrderDto) {
