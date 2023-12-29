@@ -12,7 +12,7 @@ export class OrderEntity implements Order {
   customerId: number;
 
   @ApiProperty()
-  shippingServiceId: number;
+  shippingAgentId: number;
 
   @ApiProperty({ enum: OrderPriority })
   priority: OrderPriority;

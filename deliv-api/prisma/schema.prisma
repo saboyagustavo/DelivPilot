@@ -16,14 +16,15 @@ enum Role {
 }
 
 model User {
-  id              Int              @id @unique @default(autoincrement()) @map("user_id")
-  name            String           @db.VarChar
-  email           String           @unique @db.VarChar
-  createdAt       DateTime         @default(now()) @map("created_at")
-  updatedAt       DateTime         @updatedAt @map("updated_at")
-  role            Role             @default(USER)
-  customer        Customer?
-  shippingService ShippingService?
+  id            Int            @id @unique @default(autoincrement()) @map("user_id")
+  name          String         @db.VarChar
+  email         String         @unique @db.VarChar
+  password      String
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  role          Role           @default(USER)
+  customer      Customer?
+  shippingAgent ShippingAgent?
 
   @@map("users")
 }
@@ -48,18 +49,18 @@ enum OrderPriority {
 }
 
 model Order {
-  id                Int           @id @default(autoincrement()) @map("order_id")
-  status            OrderStatus   @map("status")
-  customerId        Int           @map("customer_id")
-  shippingServiceId Int           @map("shipping_service_id")
-  priority          OrderPriority @map("priority")
-  trackingCode      String?       @unique @map("tracking_code") @db.VarChar
-  closed            Boolean       @default(false)
-  createdAt         DateTime      @default(now()) @map("created_at")
-  updatedAt         DateTime      @updatedAt @map("updated_at")
+  id              Int           @id @default(autoincrement()) @map("order_id")
+  status          OrderStatus   @map("status")
+  customerId      Int           @map("customer_id")
+  shippingAgentId Int           @map("shipping_agent_id")
+  priority        OrderPriority @map("priority")
+  trackingCode    String?       @unique @map("tracking_code") @db.VarChar
+  closed          Boolean       @default(false)
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
 
-  customer        Customer        @relation(fields: [customerId], references: [id])
-  shippingService ShippingService @relation(fields: [shippingServiceId], references: [id])
+  customer      Customer      @relation(fields: [customerId], references: [id])
+  shippingAgent ShippingAgent @relation(fields: [shippingAgentId], references: [id])
 
   @@map("orders")
 }
@@ -75,13 +76,13 @@ model Customer {
   @@map("customers")
 }
 
-model ShippingService {
-  id          Int     @id @default(autoincrement()) @map("shipping_id")
+model ShippingAgent {
+  id          Int     @id @default(autoincrement()) @map("agent_id")
   userId      Int     @unique @map("user_id")
   legalPerson Boolean @default(false) @map("legal_person")
 
   user  User    @relation(fields: [userId], references: [id])
   Order Order[]
 
-  @@map("shipping_services")
+  @@map("shipping_agents")
 }

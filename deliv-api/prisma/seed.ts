@@ -8,6 +8,7 @@ async function createRandomUser(role: Role) {
     data: {
       name: faker.internet.userName(),
       email: faker.internet.email(),
+      password: faker.internet.password({ length: 12, memorable: true }),
       role,
     },
   });
@@ -18,13 +19,13 @@ async function createRandomUser(role: Role) {
 async function createRandomUserCategory(user: any) {
   switch (user.role) {
     case Role.ADMIN: {
-      const shippingService = await prisma.shippingService.create({
+      const shippingAgent = await prisma.shippingAgent.create({
         data: {
           userId: user.id,
           legalPerson: Math.random() < 0.5,
         },
       });
-      return shippingService;
+      return shippingAgent;
     }
     case Role.USER: {
       const customer = await prisma.customer.create({
@@ -42,7 +43,7 @@ async function createRandomUserCategory(user: any) {
 
 async function createRandomOrder(
   customer: any,
-  shippingService: any,
+  shippingAgent: any,
   priority: OrderPriority,
   status: OrderStatus,
 ) {
@@ -53,7 +54,7 @@ async function createRandomOrder(
     data: {
       status: status,
       customer: { connect: { id: customer.id } },
-      shippingService: { connect: { id: shippingService.id } },
+      shippingAgent: { connect: { id: shippingAgent.id } },
       priority,
       trackingCode: faker.string.uuid().substring(0, 20).toUpperCase(),
       closed: isClosed,
@@ -69,23 +70,23 @@ async function seedDatabase() {
     return customer;
   });
 
-  const shippingServicePromises = Array.from({ length: 50 }, async () => {
+  const shippingAgentPromises = Array.from({ length: 50 }, async () => {
     const user = await createRandomUser(Role.ADMIN);
-    const shippingService = await createRandomUserCategory(user);
-    return shippingService;
+    const shippingAgent = await createRandomUserCategory(user);
+    return shippingAgent;
   });
 
-  const [customers, shippingServices] = await Promise.all([
+  const [customers, shippingAgents] = await Promise.all([
     Promise.all(customerPromises),
-    Promise.all(shippingServicePromises),
+    Promise.all(shippingAgentPromises),
   ]);
 
   const orderPromises = Array.from({ length: 100 }, () => {
     const randomCustomer =
       customers[Math.floor(Math.random() * customers.length)];
 
-    const randomShippingService =
-      shippingServices[Math.floor(Math.random() * shippingServices.length)];
+    const randomShippingAgent =
+      shippingAgents[Math.floor(Math.random() * shippingAgents.length)];
 
     const randomPriority =
       Object.values(OrderPriority)[
@@ -99,7 +100,7 @@ async function seedDatabase() {
 
     return createRandomOrder(
       randomCustomer,
-      randomShippingService,
+      randomShippingAgent,
       randomPriority,
       randomStatus,
     );

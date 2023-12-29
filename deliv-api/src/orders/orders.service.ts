@@ -17,7 +17,7 @@ export class OrdersService {
       skip,
       take: pageSize,
       include: {
-        shippingService: {
+        shippingAgent: {
           select: {
             id: true,
             user: { select: { name: true } },

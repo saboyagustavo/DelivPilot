@@ -36,7 +36,7 @@ async function generateMockUserCategory(user) {
 
 function generateMockOrder(
   customer: any,
-  shippingService: any,
+  shippingAgent: any,
   priority: OrderPriority,
   status: OrderStatus,
 ) {
@@ -45,7 +45,7 @@ function generateMockOrder(
   return {
     status: status,
     customerId: customer.id,
-    shippingServiceId: shippingService.id,
+    shippingAgentId: shippingAgent.id,
     priority,
     trackingCode: faker.string.uuid().substring(0, 20).toUpperCase(),
     closed: isClosed,
@@ -59,17 +59,17 @@ function generateMockDataForOrder() {
     return customer;
   });
 
-  const shippingServices = Array.from({ length: 25 }, async () => {
+  const shippingAgents = Array.from({ length: 25 }, async () => {
     const user = await generateMockUser(Role.ADMIN);
-    const shippingService = await generateMockUserCategory(user);
-    return shippingService;
+    const shippingAgent = await generateMockUserCategory(user);
+    return shippingAgent;
   });
 
   const randomCustomer =
     customers[Math.floor(Math.random() * customers.length)];
 
-  const randomShippingService =
-    shippingServices[Math.floor(Math.random() * shippingServices.length)];
+  const randomshippingAgent =
+    shippingAgents[Math.floor(Math.random() * shippingAgents.length)];
 
   const randomPriority =
     Object.values(OrderPriority)[
@@ -83,7 +83,7 @@ function generateMockDataForOrder() {
 
   return generateMockOrder(
     randomCustomer,
-    randomShippingService,
+    randomshippingAgent,
     randomPriority,
     randomStatus,
   );

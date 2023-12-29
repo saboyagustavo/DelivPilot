@@ -28,16 +28,19 @@ export class OrdersController {
   @Get('/all/pagination/:page/:pageSize')
   @ApiOkResponse({ type: OrderEntity, isArray: true })
   findAllPagination(
-    @Param('page') page?: string,
-    @Param('pageSize') pageSize?: string,
+    @Param('page', ParseIntPipe) page?: number,
+    @Param('pageSize', ParseIntPipe) pageSize?: number,
   ) {
-    return this.ordersService.findAllFetchPagination(+page, +pageSize);
+    return this.ordersService.findAllFetchPagination(page, pageSize);
   }
 
   @Get('/all/:page/:pageSize')
   @ApiOkResponse({ type: OrderEntity, isArray: true })
-  findAll(@Param('page') page?: string, @Param('pageSize') pageSize?: string) {
-    return this.ordersService.findAll(+page, +pageSize);
+  findAll(
+    @Param('page', ParseIntPipe) page?: number,
+    @Param('pageSize', ParseIntPipe) pageSize?: number,
+  ) {
+    return this.ordersService.findAll(page, pageSize);
   }
 
   @Get(':id')

@@ -23,7 +23,7 @@ export class CreateOrderDto {
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
-  shippingServiceId: number;
+  shippingAgentId: number;
 
   @ApiProperty({ enum: OrderPriority })
   @IsEnum(OrderPriority)
