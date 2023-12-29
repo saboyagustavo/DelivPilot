@@ -40,5 +40,5 @@ export class CreateOrderDto {
   @ApiProperty({ required: false, default: false })
   @IsBoolean()
   @IsOptional()
-  closed: boolean;
+  closed?: boolean = false;
 }
