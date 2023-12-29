@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   ParseIntPipe,
+  NotFoundException,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -41,8 +42,12 @@ export class OrdersController {
 
   @Get(':id')
   @ApiOkResponse({ type: OrderEntity })
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.ordersService.findOne(id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const order = await this.ordersService.findOne(id);
+    if (!order) {
+      throw new NotFoundException(`Order id '${id}' does not exist`);
+    }
+    return order;
   }
 
   @Patch(':id')
