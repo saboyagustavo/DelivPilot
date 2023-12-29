@@ -7,7 +7,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class OrdersService {
   constructor(private prisma: PrismaService) {}
   create(createOrderDto: CreateOrderDto) {
-    return 'This action adds a new order';
+    return this.prisma.order.create({ data: createOrderDto });
   }
 
   async findAll(page = 1, pageSize = 10) {
