@@ -7,11 +7,10 @@ import {
   IsOptional,
   IsBoolean,
 } from 'class-validator';
-import { Order } from '../entities/order.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { faker } from '@faker-js/faker';
 
-export class CreateOrderDto extends Order {
+export class CreateOrderDto {
   @ApiProperty({ enum: OrderStatus })
   @IsEnum(OrderStatus)
   status: OrderStatus;
