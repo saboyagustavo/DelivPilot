@@ -20,7 +20,13 @@ export class OrdersService {
         shippingAgent: {
           select: {
             id: true,
-            user: { select: { name: true } },
+            name: true,
+          },
+        },
+        customer: {
+          select: {
+            id: true,
+            name: true,
           },
         },
       },

@@ -5,13 +5,11 @@ import {
   Body,
   Param,
   Delete,
-  Patch,
   ParseIntPipe,
   NotFoundException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { UserEntity } from './entities/user.entity';
 
@@ -40,15 +38,6 @@ export class UsersController {
       throw new NotFoundException(`User id '${id}' does not exist`);
     }
     return user;
-  }
-
-  @Patch(':id')
-  @ApiOkResponse({ type: UserEntity })
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
-    return this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')

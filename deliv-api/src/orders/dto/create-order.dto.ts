@@ -31,6 +31,7 @@ export class CreateOrderDto {
 
   @ApiProperty({
     required: false,
+    nullable: true,
     default: faker.string.uuid().substring(0, 20).toUpperCase(),
   })
   @IsString()

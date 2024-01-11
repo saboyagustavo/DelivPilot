@@ -16,15 +16,15 @@ enum Role {
 }
 
 model User {
-  id            Int            @id @unique @default(autoincrement()) @map("user_id")
-  name          String         @db.VarChar
-  email         String         @unique @db.VarChar
-  password      String
-  createdAt     DateTime       @default(now()) @map("created_at")
-  updatedAt     DateTime       @updatedAt @map("updated_at")
-  role          Role           @default(USER)
-  customer      Customer?
-  shippingAgent ShippingAgent?
+  id         Int      @id @unique @default(autoincrement()) @map("user_id")
+  name       String   @db.VarChar
+  email      String   @unique @db.VarChar
+  password   String
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  role       Role     @default(USER)
+  orders     Order[]  @relation("customer")
+  deliveries Order[]  @relation("shippingAgent")
 
   @@map("users")
 }
@@ -59,30 +59,8 @@ model Order {
   createdAt       DateTime      @default(now()) @map("created_at")
   updatedAt       DateTime      @updatedAt @map("updated_at")
 
-  customer      Customer      @relation(fields: [customerId], references: [id])
-  shippingAgent ShippingAgent @relation(fields: [shippingAgentId], references: [id])
+  customer      User @relation("customer", fields: [customerId], references: [id])
+  shippingAgent User @relation("shippingAgent", fields: [shippingAgentId], references: [id])
 
   @@map("orders")
-}
-
-model Customer {
-  id          Int     @id @default(autoincrement()) @map("customer_id")
-  userId      Int     @unique @map("user_id")
-  legalPerson Boolean @default(false) @map("legal_person")
-
-  user  User    @relation(fields: [userId], references: [id])
-  order Order[]
-
-  @@map("customers")
-}
-
-model ShippingAgent {
-  id          Int     @id @default(autoincrement()) @map("agent_id")
-  userId      Int     @unique @map("user_id")
-  legalPerson Boolean @default(false) @map("legal_person")
-
-  user  User    @relation(fields: [userId], references: [id])
-  Order Order[]
-
-  @@map("shipping_agents")
 }

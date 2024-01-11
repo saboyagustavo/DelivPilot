@@ -16,31 +16,6 @@ async function createRandomUser(role: Role) {
   return user;
 }
 
-async function createRandomUserCategory(user: any) {
-  switch (user.role) {
-    case Role.ADMIN: {
-      const shippingAgent = await prisma.shippingAgent.create({
-        data: {
-          userId: user.id,
-          legalPerson: Math.random() < 0.5,
-        },
-      });
-      return shippingAgent;
-    }
-    case Role.USER: {
-      const customer = await prisma.customer.create({
-        data: {
-          userId: user.id,
-          legalPerson: Math.random() < 0.5,
-        },
-      });
-      return customer;
-    }
-    default:
-      return;
-  }
-}
-
 async function createRandomOrder(
   customer: any,
   shippingAgent: any,
@@ -65,15 +40,11 @@ async function createRandomOrder(
 
 async function seedDatabase() {
   const customerPromises = Array.from({ length: 50 }, async () => {
-    const user = await createRandomUser(Role.USER);
-    const customer = await createRandomUserCategory(user);
-    return customer;
+    return await createRandomUser(Role.USER);
   });
 
   const shippingAgentPromises = Array.from({ length: 50 }, async () => {
-    const user = await createRandomUser(Role.ADMIN);
-    const shippingAgent = await createRandomUserCategory(user);
-    return shippingAgent;
+    return await createRandomUser(Role.ADMIN);
   });
 
   const [customers, shippingAgents] = await Promise.all([

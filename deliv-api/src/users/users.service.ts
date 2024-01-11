@@ -2,27 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Role } from '@prisma/client';
-import { CustomersService } from 'src/customers/customers.service';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private prisma: PrismaService,
-    customersService: CustomersService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
   async create(createUserDto: CreateUserDto) {
-    const user = await this.prisma.user.create({
-      data: createUserDto,
-    });
-
-    switch (user.role) {
-      case Role.ADMIN: {
-      }
-
-      case Role.USER: {
-      }
-    }
+    return this.prisma.user.create({ data: createUserDto });
   }
 
   findAll() {
