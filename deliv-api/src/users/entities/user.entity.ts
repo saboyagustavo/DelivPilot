@@ -11,7 +11,6 @@ export class UserEntity implements User {
   @ApiProperty()
   email: string;
 
-  @ApiProperty({ minLength: 6 })
   password: string;
 
   @ApiProperty({ default: new Date() })

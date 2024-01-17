@@ -1,6 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
-import { IsEmail, IsEnum, IsString, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsString,
+  MinLength,
+} from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty()
@@ -15,6 +21,7 @@ export class CreateUserDto {
 
   @ApiProperty({ minLength: 6 })
   @IsString()
+  @IsNotEmpty()
   @MinLength(6, {
     message: 'Your password must contain at least 6 digits or over',
   })
