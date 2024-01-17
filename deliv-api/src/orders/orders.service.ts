@@ -51,7 +51,23 @@ export class OrdersService {
   }
 
   findOne(id: number) {
-    return this.prisma.order.findUnique({ where: { id } });
+    return this.prisma.order.findUnique({
+      where: { id },
+      include: {
+        customer: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        shippingAgent: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
   }
 
   update(id: number, updateOrderDto: UpdateOrderDto) {

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Order, OrderPriority, OrderStatus } from '@prisma/client';
+import { UserEntity } from 'src/users/entities/user.entity';
 
 export class OrderEntity implements Order {
   @ApiProperty()
@@ -23,9 +24,26 @@ export class OrderEntity implements Order {
   @ApiProperty({ default: false })
   closed: boolean;
 
+  @ApiProperty({ required: false, type: UserEntity })
+  customer?: UserEntity;
+
+  @ApiProperty({ required: false, type: UserEntity })
+  shippingAgent?: UserEntity;
+
   @ApiProperty()
   createdAt: Date;
 
   @ApiProperty()
   updatedAt: Date;
+
+  constructor({ customer, shippingAgent, ...data }: Partial<OrderEntity>) {
+    Object.assign(this, data);
+    if (customer) {
+      this.customer = new UserEntity(customer);
+    }
+
+    if (shippingAgent) {
+      this.shippingAgent = new UserEntity(shippingAgent);
+    }
+  }
 }
