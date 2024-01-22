@@ -4,6 +4,8 @@ import { AuthController } from './auth.controller';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { PrismaModule } from 'src/prisma/prisma.module';
+import { JwtStrategy } from './jwt.strategy';
+import { UsersModule } from 'src/users/users.module';
 
 export const jwtKey = process.env.DELIV_API_JWT_KEY;
 
@@ -15,8 +17,9 @@ export const jwtKey = process.env.DELIV_API_JWT_KEY;
       secret: jwtKey,
       signOptions: { expiresIn: '1d' },
     }),
+    UsersModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, JwtStrategy],
 })
 export class AuthModule {}

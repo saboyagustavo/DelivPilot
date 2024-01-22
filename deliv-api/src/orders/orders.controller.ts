@@ -7,12 +7,19 @@ import {
   Param,
   ParseIntPipe,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { OrderEntity } from './entities/order.entity';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('orders')
 @ApiTags('Orders')
@@ -20,12 +27,16 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiCreatedResponse({ type: OrderEntity })
   create(@Body() createOrderDto: CreateOrderDto) {
     return this.ordersService.create(createOrderDto);
   }
 
   @Get('/all/pagination/:page/:pageSize')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: OrderEntity, isArray: true })
   findAllPagination(
     @Param('page', ParseIntPipe) page?: number,
@@ -35,6 +46,8 @@ export class OrdersController {
   }
 
   @Get('/all/:page/:pageSize')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: OrderEntity, isArray: true })
   findAll(
     @Param('page', ParseIntPipe) page?: number,
@@ -44,6 +57,8 @@ export class OrdersController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: OrderEntity })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const order = await this.ordersService.findOne(id);
@@ -54,6 +69,8 @@ export class OrdersController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: OrderEntity })
   update(
     @Param('id', ParseIntPipe) id: number,

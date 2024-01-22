@@ -14,6 +14,7 @@ async function bootstrap() {
     .setTitle('DelivApi')
     .setDescription('DelivPilot API')
     .setVersion('0.1')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
