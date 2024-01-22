@@ -1,14 +1,20 @@
 import { PrismaClient, Role, OrderStatus, OrderPriority } from '@prisma/client';
 import { faker } from '@faker-js/faker';
+import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
 async function createRandomUser(role: Role) {
+  const hashedPassword = await bcrypt.hash(
+    faker.internet.password({ length: 12, memorable: true }),
+    10,
+  );
+
   const user = await prisma.user.create({
     data: {
       name: faker.internet.userName(),
       email: faker.internet.email(),
-      password: faker.internet.password({ length: 12, memorable: true }),
+      password: hashedPassword,
       role,
     },
   });
